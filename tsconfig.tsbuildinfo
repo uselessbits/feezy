@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/i18n.ts","./src/main.tsx","./src/components/formula.tsx","./src/components/physicschart.tsx","./src/data/curriculum.ts","./src/data/types.ts","./src/data/chapters/currentelectricity.ts","./src/data/chapters/mechanics.ts","./src/data/chapters/thermodynamics.ts"],"version":"5.9.3"}

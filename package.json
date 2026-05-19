@@ -1,0 +1,32 @@
+{
+  "name": "feezy",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "antd": "^5.26.0",
+    "i18next": "^24.2.3",
+    "katex": "^0.16.47",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-i18next": "^15.5.1",
+    "react-katex": "^3.1.0",
+    "react-router-dom": "^7.6.1",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "@types/react": "^19.1.7",
+    "@types/react-dom": "^19.1.7",
+    "@types/react-katex": "^3.0.4",
+    "@vitejs/plugin-react": "^4.5.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}

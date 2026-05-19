@@ -1,0 +1,1 @@
+This is a basic site for students wanting to learn physics.
