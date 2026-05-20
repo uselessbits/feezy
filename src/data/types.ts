@@ -22,7 +22,7 @@ export interface SectionChart {
 
 export type ChapterId = 'mechanics' | 'thermodynamics' | 'current-electricity' | 'optics';
 
-export type SimulationType = 'inclined-plane' | 'piston-gas' | 'electric-circuit';
+export type SimulationType = 'inclined-plane' | 'piston-gas' | 'electric-circuit' | 'refraction-optics' | 'lens-optics';
 
 export interface LessonSection {
   title: LocalizedText;

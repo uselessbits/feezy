@@ -55,6 +55,7 @@ export const optics: Chapter = {
             ],
           },
           formulas: ['n_1 \\sin(i) = n_2 \\sin(r)', 'n = c / v', '\\sin(l) = n_2 / n_1'],
+          simulation: 'refraction-optics',
         },
       ],
     },
@@ -86,6 +87,7 @@ export const optics: Chapter = {
             ],
           },
           formulas: ['\\frac{1}{f} = \\frac{1}{x_2} - \\frac{1}{x_1}', 'C = \\frac{1}{f}', '\\beta = \\frac{x_2}{x_1}'],
+          simulation: 'lens-optics',
         },
         {
           title: { en: 'Optical Systems and Instruments', ro: 'Sisteme și Instrumente Optice' },

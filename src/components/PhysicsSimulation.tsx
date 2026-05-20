@@ -6,7 +6,7 @@ import { Formula } from './Formula';
 const { Title, Text, Paragraph } = Typography;
 
 interface PhysicsSimulationProps {
-  type: 'inclined-plane' | 'piston-gas' | 'electric-circuit';
+  type: 'inclined-plane' | 'piston-gas' | 'electric-circuit' | 'refraction-optics' | 'lens-optics';
   language: 'en' | 'ro';
 }
 
@@ -57,6 +57,37 @@ export function PhysicsSimulation({ type, language }: Readonly<PhysicsSimulation
       voltageR2: 'Voltage drop on R2 (V2)',
       power: 'Total Power (P)',
       particlesSpeed: 'Average Particle Velocity',
+      // Optics - Refraction
+      medium1: 'Medium 1 (n₁)',
+      medium2: 'Medium 2 (n₂)',
+      incAngle: 'Angle of Incidence (i)',
+      refractionIndex1: 'Refractive Index n₁',
+      refractionIndex2: 'Refractive Index n₂',
+      refractedAngle: 'Angle of Refraction (r)',
+      reflectedAngle: 'Angle of Reflection (r\')',
+      criticalAngle: 'Critical Angle (l)',
+      tirMessage: 'Total Internal Reflection!',
+      phaseVelocity1: 'Velocity in Medium 1 (v₁)',
+      phaseVelocity2: 'Velocity in Medium 2 (v₂)',
+      // Optics - Thin Lenses
+      lensType: 'Lens Type',
+      converging: 'Converging (Convex)',
+      diverging: 'Diverging (Concave)',
+      focalLength: 'Focal Length (f)',
+      objectDistance: 'Object Distance (x₁)',
+      objectHeight: 'Object Height (y₁)',
+      imageDistance: 'Image Distance (x₂)',
+      magnification: 'Linear Magnification (β)',
+      imageHeight: 'Image Height (y₂)',
+      imageProperties: 'Image Type',
+      real: 'Real Image',
+      virtual: 'Virtual Image',
+      upright: 'Upright',
+      inverted: 'Inverted',
+      magnified: 'Magnified',
+      diminished: 'Diminished',
+      opticalPower: 'Optical Power (C)',
+      infinityMessage: 'Image formed at infinity (parallel rays)',
     },
     ro: {
       play: 'Pornește',
@@ -103,6 +134,37 @@ export function PhysicsSimulation({ type, language }: Readonly<PhysicsSimulation
       voltageR2: 'Cădere tensiune pe R2 (V2)',
       power: 'Putere Totală (P)',
       particlesSpeed: 'Viteza Medie a Particulelor',
+      // Optica - Refracție
+      medium1: 'Mediul 1 (n₁)',
+      medium2: 'Mediul 2 (n₂)',
+      incAngle: 'Unghi de Incidență (i)',
+      refractionIndex1: 'Indice de Refracție n₁',
+      refractionIndex2: 'Indice de Refracție n₂',
+      refractedAngle: 'Unghi de Refracție (r)',
+      reflectedAngle: 'Unghi de Reflexie (r\')',
+      criticalAngle: 'Unghi Limită (l)',
+      tirMessage: 'Reflexie Totală Internă!',
+      phaseVelocity1: 'Viteza în Mediul 1 (v₁)',
+      phaseVelocity2: 'Viteza în Mediul 2 (v₂)',
+      // Optica - Lentile Subțiri
+      lensType: 'Tipul Lentilei',
+      converging: 'Convergentă (Biconvexă)',
+      diverging: 'Divergentă (Biconcavă)',
+      focalLength: 'Distanță Focală (f)',
+      objectDistance: 'Distanță Obiect (x₁)',
+      objectHeight: 'Înălțime Obiect (y₁)',
+      imageDistance: 'Distanță Imagine (x₂)',
+      magnification: 'Mărire Liniară (β)',
+      imageHeight: 'Înălțime Imagine (y₂)',
+      imageProperties: 'Tipul Imaginii',
+      real: 'Imagine Reală',
+      virtual: 'Imagine Virtuală',
+      upright: 'Dreaptă',
+      inverted: 'Răsturnată',
+      magnified: 'Mărită',
+      diminished: 'Micșorată',
+      opticalPower: 'Convergență (C)',
+      infinityMessage: 'Imagine formată la infinit (raze paralele)',
     },
   }[language];
 
@@ -475,6 +537,62 @@ export function PhysicsSimulation({ type, language }: Readonly<PhysicsSimulation
     }
   }, [elecIsClosed, circuitCurrent]);
 
+  // ----------------------------------------------------
+  // SIMULATION 4: REFRACTION & REFLECTION (SNELL'S LAW)
+  // ----------------------------------------------------
+  const [refAngle, setRefAngle] = useState(45); // degrees
+  const [refN1, setRefN1] = useState(1.0); // Medium 1 index (e.g. air)
+  const [refN2, setRefN2] = useState(1.5); // Medium 2 index (e.g. glass)
+
+  // Calculations for refraction
+  const theta1 = (refAngle * Math.PI) / 180;
+  
+  // Critical angle for total internal reflection: sin(l) = n2 / n1 (only exists if n1 > n2)
+  const hasCriticalAngle = refN1 > refN2;
+  const criticalAngleRad = hasCriticalAngle ? Math.asin(refN2 / refN1) : null;
+  const criticalAngleDeg = criticalAngleRad ? (criticalAngleRad * 180) / Math.PI : null;
+  
+  const isTIR = hasCriticalAngle && refAngle >= (criticalAngleDeg ?? 90);
+  
+  // Angle of refraction
+  let theta2 = 0;
+  if (!isTIR) {
+    theta2 = Math.asin((refN1 * Math.sin(theta1)) / refN2);
+  }
+  const refAngleOutDeg = isTIR ? null : (theta2 * 180) / Math.PI;
+
+  // Velocities in c
+  const vel1 = 1 / refN1;
+  const vel2 = 1 / refN2;
+
+  // ----------------------------------------------------
+  // SIMULATION 5: THIN LENS RAY TRACING
+  // ----------------------------------------------------
+  const [lensType, setLensType] = useState<'converging' | 'diverging'>('converging');
+  const [lensF, setLensF] = useState(60); // focal length in pixels
+  const [lensX1, setLensX1] = useState(120); // object distance in pixels
+  const [lensY1, setLensY1] = useState(40); // object height in pixels
+
+  // Thin lens formula: 1/f = 1/x2 - 1/x1
+  // Sign convention: 
+  // - Object is on the left, so object coordinate is negative: X1 = -lensX1
+  // - Focal length F: +lensF for converging, -lensF for diverging
+  const X1 = -lensX1;
+  const F = lensType === 'converging' ? lensF : -lensF;
+  
+  // Check if object is at focus for converging lens
+  const isAtFocus = lensType === 'converging' && Math.abs(lensX1 - lensF) < 1e-3;
+  
+  // Calculate X2: 1/X2 = 1/F + 1/X1 -> X2 = (F * X1) / (F + X1)
+  const X2 = isAtFocus ? Infinity : (F * X1) / (F + X1);
+  const lensBeta = isAtFocus ? Infinity : X2 / X1;
+  const lensY2 = isAtFocus ? Infinity : lensBeta * lensY1;
+  
+  // Optical power: C = 1/f
+  // Scale so that focal length in meters is lensF / 100 (e.g. 60px = 0.6m)
+  const focalMeters = F / 100;
+  const opticalPowerValue = 1 / focalMeters;
+
   return (
     <Card className="physics-simulation-card glass-card">
       <Row gutter={[24, 24]}>
@@ -710,6 +828,275 @@ export function PhysicsSimulation({ type, language }: Readonly<PhysicsSimulation
                 })()}
               </svg>
             )}
+
+            {type === 'refraction-optics' && (() => {
+              // Vector calculations for refraction
+              // R = 100 is ray radius from center (200, 120)
+              const R = 100;
+              const xStart = 200 - R * Math.sin(theta1);
+              const yStart = 120 - R * Math.cos(theta1);
+              
+              // Reflected ray
+              const xRefl = 200 + R * Math.sin(theta1);
+              const yRefl = 120 - R * Math.cos(theta1);
+              
+              // Refracted ray (only if not TIR)
+              const xRefr = isTIR ? 200 : 200 + R * Math.sin(theta2);
+              const yRefr = isTIR ? 120 : 120 + R * Math.cos(theta2);
+
+              return (
+                <svg viewBox="0 0 400 240" className="optics-refraction-svg" style={{ width: '100%', height: 'auto', maxHeight: '240px' }}>
+                  {/* Background Media Blocks */}
+                  {/* Medium 1 (Top) */}
+                  <rect x="10" y="10" width="380" height="110" rx="8" fill="rgba(31, 210, 178, 0.06)" stroke="rgba(31, 210, 178, 0.2)" strokeWidth="1" />
+                  {/* Medium 2 (Bottom) */}
+                  <rect x="10" y="120" width="380" height="110" rx="8" fill="rgba(124, 92, 255, 0.08)" stroke="rgba(124, 92, 255, 0.2)" strokeWidth="1" />
+                  
+                  {/* Interface Boundary Line */}
+                  <line x1="10" y1="120" x2="390" y2="120" stroke="#7c5cff" strokeWidth="3" />
+                  
+                  {/* Normal Line (Vertical) */}
+                  <line x1="200" y1="15" x2="200" y2="225" stroke="#9ca3af" strokeWidth="1.5" strokeDasharray="5 5" />
+                  
+                  {/* Incident Ray (Red Laser) */}
+                  <line x1={xStart} y1={yStart} x2="200" y2="120" stroke="#ff5959" strokeWidth="3.5" strokeLinecap="round" />
+                  {/* Arrowhead on incident ray */}
+                  <circle cx={(xStart + 200) / 2} cy={(yStart + 120) / 2} r="4" fill="#ff5959" />
+
+                  {/* Reflected Ray (Weak red line, or bright if TIR) */}
+                  <line x1="200" y1="120" x2={xRefl} y2={yRefl} stroke="#ff5959" strokeWidth={isTIR ? 3.5 : 1.5} opacity={isTIR ? 0.9 : 0.4} strokeLinecap="round" />
+                  
+                  {/* Refracted Ray (Green Laser, only if not TIR) */}
+                  {!isTIR && (
+                    <>
+                      <line x1="200" y1="120" x2={xRefr} y2={yRefr} stroke="#1fd2b2" strokeWidth="3.5" strokeLinecap="round" />
+                      <circle cx={(200 + xRefr) / 2} cy={(120 + yRefr) / 2} r="4" fill="#1fd2b2" />
+                    </>
+                  )}
+                  
+                  {/* Incidence angle arc & label */}
+                  {refAngle > 5 && (
+                    <path
+                      d={`M 200 ${120 - 25} A 25 25 0 0 0 ${200 - 25 * Math.sin(theta1)} ${120 - 25 * Math.cos(theta1)}`}
+                      fill="none"
+                      stroke="#ff5959"
+                      strokeWidth="1.5"
+                    />
+                  )}
+                  <text x={200 - 32} y={120 - 30} fill="#ff5959" fontSize="11" fontWeight="bold">i = {refAngle}°</text>
+                  
+                  {/* Refraction angle arc & label */}
+                  {!isTIR && refAngleOutDeg && refAngleOutDeg > 3 && (
+                    <path
+                      d={`M 200 ${120 + 25} A 25 25 0 0 0 ${200 + 25 * Math.sin(theta2)} ${120 + 25 * Math.cos(theta2)}`}
+                      fill="none"
+                      stroke="#1fd2b2"
+                      strokeWidth="1.5"
+                    />
+                  )}
+                  {!isTIR && refAngleOutDeg && (
+                    <text x={200 + 15} y={120 + 35} fill="#1fd2b2" fontSize="11" fontWeight="bold">r = {refAngleOutDeg.toFixed(1)}°</text>
+                  )}
+
+                  {/* TIR Banner */}
+                  {isTIR && (
+                    <g className="animate-glow">
+                      <rect x="90" y="135" width="220" height="32" rx="6" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" strokeWidth="1.5" />
+                      <text x="200" y="156" fill="#ef4444" fontSize="12" fontWeight="800" textAnchor="middle" letterSpacing="0.05em">
+                        {t.tirMessage}
+                      </text>
+                    </g>
+                  )}
+
+                  {/* Medium labels */}
+                  <text x="25" y="32" fill="#6b7280" fontSize="12" fontWeight="bold">{language === 'en' ? 'Medium 1 (Air)' : 'Mediul 1 (Aer)'}</text>
+                  <text x="25" y="48" fill="#1fd2b2" fontSize="11" fontWeight="bold">n₁ = {refN1.toFixed(2)}</text>
+                  <text x="25" y="200" fill="#6b7280" fontSize="12" fontWeight="bold">{refN2 === 1.5 ? (language === 'en' ? 'Medium 2 (Glass)' : 'Mediul 2 (Sticlă)') : (language === 'en' ? 'Medium 2 (Liquid)' : 'Mediul 2 (Lichid)')}</text>
+                  <text x="25" y="216" fill="#7c5cff" fontSize="11" fontWeight="bold">n₂ = {refN2.toFixed(2)}</text>
+                </svg>
+              );
+            })()}
+
+            {type === 'lens-optics' && (() => {
+              const O_x = 200;
+              const O_y = 120;
+              
+              // Coordinates of object
+              const objX = O_x - lensX1;
+              const objY = O_y - lensY1;
+
+              // Coordinates of focal points
+              // Converging lens: F1 (left) = O_x - lensF, F2 (right) = O_x + lensF
+              // Diverging lens: F2 (left) = O_x - lensF, F1 (right) = O_x + lensF
+              const f1X = lensType === 'converging' ? O_x - lensF : O_x + lensF;
+              const f2X = lensType === 'converging' ? O_x + lensF : O_x - lensF;
+
+              // Image coordinates
+              const imgX = isAtFocus ? null : O_x + X2;
+              const imgY = isAtFocus ? null : O_y - lensY2;
+
+              // Ray tracing lines
+              // Ray 1: Parallel to axis, then refracted through focus
+              // From object tip (objX, objY) to lens (O_x, objY)
+              // Then from lens (O_x, objY) downwards/upwards through f2X
+              const r1LensY = objY;
+              
+              // Slope of refracted ray 1
+              const m1 = lensType === 'converging' 
+                ? (O_y - r1LensY) / (O_x + lensF - O_x) // lensY1 / lensF
+                : (O_y - r1LensY) / (O_x - lensF - O_x); // -lensY1 / lensF (diverging from left focus)
+
+              // End coordinates for ray 1 at boundary x = 380
+              const r1EndX = 370;
+              const r1EndY = O_y + m1 * (r1EndX - O_x);
+
+              // Ray 2: Central ray, straight line through O (O_x, O_y)
+              const r2EndX = 370;
+              const r2EndY = O_y + (O_y - objY) / (O_x - objX) * (r2EndX - O_x);
+
+              // Ray 3: Focal ray
+              // Converging: through F1 (left focus) to lens, then horizontal
+              // Diverging: towards F1 (right focus) to lens, then horizontal
+              let r3LensY = O_y;
+              if (lensType === 'converging') {
+                if (!isAtFocus) {
+                  r3LensY = O_y - lensY2;
+                } else {
+                  r3LensY = O_y;
+                }
+              } else {
+                // Diverging: line from object tip to right focus
+                const slopeObjToRightF = (O_y - objY) / (O_x + lensF - objX);
+                r3LensY = objY + slopeObjToRightF * (O_x - objX);
+              }
+
+              return (
+                <svg viewBox="0 0 400 240" className="optics-lens-svg" style={{ width: '100%', height: 'auto', maxHeight: '240px' }}>
+                  {/* Optical Axis */}
+                  <line x1="15" y1={O_y} x2="385" y2={O_y} stroke="#9ca3af" strokeWidth="1.5" />
+                  <text x="375" y={O_y - 8} fill="#9ca3af" fontSize="10" fontWeight="bold">x</text>
+
+                  {/* Focal Point Dots & Labels */}
+                  {/* Left Focal Point */}
+                  <circle cx={O_x - lensF} cy={O_y} r="3.5" fill="#7c5cff" />
+                  <text x={O_x - lensF - 8} y={O_y + 16} fill="#7c5cff" fontSize="10" fontWeight="bold">
+                    {lensType === 'converging' ? 'F' : 'F\''}
+                  </text>
+
+                  {/* Right Focal Point */}
+                  <circle cx={O_x + lensF} cy={O_y} r="3.5" fill="#7c5cff" />
+                  <text x={O_x + lensF - 8} y={O_y + 16} fill="#7c5cff" fontSize="10" fontWeight="bold">
+                    {lensType === 'converging' ? 'F\'' : 'F'}
+                  </text>
+
+                  {/* Lens Graphic (Vertical Line at x = 200) */}
+                  <line x1={O_x} y1="20" x2={O_x} y2="220" stroke="#7c5cff" strokeWidth="2.5" />
+                  
+                  {/* Lens Arrowheads */}
+                  {lensType === 'converging' ? (
+                    <>
+                      {/* Top arrow */}
+                      <path d={`M ${O_x - 8} 30 L ${O_x} 20 L ${O_x + 8} 30`} fill="none" stroke="#7c5cff" strokeWidth="2" strokeLinecap="round" />
+                      {/* Bottom arrow */}
+                      <path d={`M ${O_x - 8} 210 L ${O_x} 220 L ${O_x + 8} 210`} fill="none" stroke="#7c5cff" strokeWidth="2" strokeLinecap="round" />
+                    </>
+                  ) : (
+                    <>
+                      {/* Top inverted arrow */}
+                      <path d={`M ${O_x - 8} 20 L ${O_x} 30 L ${O_x + 8} 20`} fill="none" stroke="#7c5cff" strokeWidth="2" strokeLinecap="round" />
+                      {/* Bottom inverted arrow */}
+                      <path d={`M ${O_x - 8} 220 L ${O_x} 210 L ${O_x + 8} 220`} fill="none" stroke="#7c5cff" strokeWidth="2" strokeLinecap="round" />
+                    </>
+                  )}
+                  <text x={O_x + 10} y="32" fill="#7c5cff" fontSize="11" fontWeight="bold">O</text>
+
+                  {/* Object Arrow (Yellow) */}
+                  <line x1={objX} y1={O_y} x2={objX} y2={objY} stroke="#ffd166" strokeWidth="4" markerEnd="url(#arrow-obj)" />
+                  <text x={objX - 12} y={objY - 8} fill="#ffd166" fontSize="10" fontWeight="bold">A</text>
+                  
+                  {/* Image Arrow (Blue/Teal, if not at infinity) */}
+                  {!isAtFocus && imgX !== null && imgY !== null && (
+                    <>
+                      <line
+                        x1={imgX}
+                        y1={O_y}
+                        x2={imgX}
+                        y2={imgY}
+                        stroke="#1fd2b2"
+                        strokeWidth="4"
+                        strokeDasharray={X2 < 0 ? '4 4' : undefined}
+                        markerEnd="url(#arrow-img)"
+                      />
+                      <text x={imgX + 6} y={imgY + (X2 < 0 && lensY2 < 0 ? 12 : -8)} fill="#1fd2b2" fontSize="10" fontWeight="bold">
+                        A'
+                      </text>
+                    </>
+                  )}
+
+                  {/* Ray 1: Parallel -> Focus */}
+                  {/* Incident segment */}
+                  <line x1={objX} y1={objY} x2={O_x} y2={objY} stroke="#ff5959" strokeWidth="1.5" opacity="0.75" />
+                  {/* Refracted segment */}
+                  <line x1={O_x} y1={objY} x2={r1EndX} y2={r1EndY} stroke="#ff5959" strokeWidth="1.5" opacity="0.75" />
+                  {/* Virtual trace back (if virtual image) */}
+                  {!isAtFocus && X2 < 0 && imgX !== null && imgY !== null && (
+                    <line x1={O_x} y1={objY} x2={imgX} y2={imgY} stroke="#ff5959" strokeWidth="1" strokeDasharray="3 3" opacity="0.8" />
+                  )}
+
+                  {/* Ray 2: Central straight ray */}
+                  <line x1={objX} y1={objY} x2={r2EndX} y2={r2EndY} stroke="#ffd166" strokeWidth="1.5" opacity="0.6" />
+                  {/* Virtual trace back for Ray 2 */}
+                  {!isAtFocus && X2 < 0 && imgX !== null && imgY !== null && (
+                    <line x1={O_x} y1={O_y} x2={imgX} y2={imgY} stroke="#ffd166" strokeWidth="1" strokeDasharray="3 3" opacity="0.8" />
+                  )}
+
+                  {/* Ray 3: Focal ray */}
+                  {lensType === 'converging' && !isAtFocus && imgX !== null && imgY !== null && (
+                    <>
+                      {/* From object tip through left focus to lens */}
+                      <line x1={objX} y1={objY} x2={O_x} y2={r3LensY} stroke="#1fd2b2" strokeWidth="1.5" opacity="0.6" />
+                      {/* Horizontally out */}
+                      <line x1={O_x} y1={r3LensY} x2="370" y2={r3LensY} stroke="#1fd2b2" strokeWidth="1.5" opacity="0.6" />
+                      {/* Virtual trace back */}
+                      {X2 < 0 && (
+                        <line x1={O_x} y1={r3LensY} x2={imgX} y2={imgY} stroke="#1fd2b2" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.8" />
+                      )}
+                    </>
+                  )}
+                  
+                  {lensType === 'diverging' && !isAtFocus && imgX !== null && imgY !== null && (
+                    <>
+                      {/* Directed towards right focus, meets lens at r3LensY */}
+                      <line x1={objX} y1={objY} x2={O_x} y2={r3LensY} stroke="#1fd2b2" strokeWidth="1.5" opacity="0.6" />
+                      {/* Refracts parallel (horizontally) */}
+                      <line x1={O_x} y1={r3LensY} x2="370" y2={r3LensY} stroke="#1fd2b2" strokeWidth="1.5" opacity="0.6" />
+                      {/* Virtual trace back */}
+                      <line x1={O_x} y1={r3LensY} x2={imgX} y2={imgY} stroke="#1fd2b2" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.8" />
+                    </>
+                  )}
+
+                  {/* Warning if at focus */}
+                  {isAtFocus && (
+                    <g>
+                      <rect x="80" y="190" width="240" height="32" rx="6" fill="rgba(255, 209, 102, 0.12)" stroke="#ffd166" strokeWidth="1.5" />
+                      <text x="200" y="210" fill="#d97706" fontSize="11" fontWeight="bold" textAnchor="middle">
+                        {t.infinityMessage}
+                      </text>
+                    </g>
+                  )}
+
+                  {/* Custom Arrow Markers */}
+                  <defs>
+                    <marker id="arrow-obj" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <path d="M 0 10 L 5 0 L 10 10 z" fill="#ffd166" />
+                    </marker>
+                    <marker id="arrow-img" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <path d="M 0 10 L 5 0 L 10 10 z" fill="#1fd2b2" />
+                    </marker>
+                  </defs>
+                </svg>
+              );
+            })()}
           </div>
         </Col>
 
@@ -829,6 +1216,49 @@ export function PhysicsSimulation({ type, language }: Readonly<PhysicsSimulation
                 </div>
               </Space>
             )}
+
+            {type === 'refraction-optics' && (
+              <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                <div>
+                  <Text>{t.incAngle}: <strong>{refAngle}°</strong></Text>
+                  <Slider min={0} max={85} value={refAngle} onChange={setRefAngle} />
+                </div>
+                <div>
+                  <Text>{t.refractionIndex1}: <strong>{refN1.toFixed(2)}</strong></Text>
+                  <Slider min={100} max={250} value={refN1 * 100} onChange={(v) => setRefN1(v / 100)} />
+                </div>
+                <div>
+                  <Text>{t.refractionIndex2}: <strong>{refN2.toFixed(2)}</strong></Text>
+                  <Slider min={100} max={250} value={refN2 * 100} onChange={(v) => setRefN2(v / 100)} />
+                </div>
+              </Space>
+            )}
+
+            {type === 'lens-optics' && (
+              <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                <div>
+                  <Text>{t.lensType}:</Text>
+                  <div style={{ marginTop: 6 }}>
+                    <Radio.Group value={lensType} onChange={(e) => setLensType(e.target.value)} size="small">
+                      <Radio.Button value="converging">{t.converging}</Radio.Button>
+                      <Radio.Button value="diverging">{t.diverging}</Radio.Button>
+                    </Radio.Group>
+                  </div>
+                </div>
+                <div>
+                  <Text>{t.focalLength}: <strong>{lensF} cm</strong></Text>
+                  <Slider min={30} max={100} value={lensF} onChange={setLensF} />
+                </div>
+                <div>
+                  <Text>{t.objectDistance}: <strong>{lensX1} cm</strong></Text>
+                  <Slider min={15} max={200} value={lensX1} onChange={setLensX1} />
+                </div>
+                <div>
+                  <Text>{t.objectHeight}: <strong>{lensY1} cm</strong></Text>
+                  <Slider min={10} max={60} value={lensY1} onChange={setLensY1} />
+                </div>
+              </Space>
+            )}
           </div>
 
           <Card className="simulation-values-card" style={{ marginTop: 20, background: 'rgba(124, 92, 255, 0.03)' }}>
@@ -930,6 +1360,78 @@ export function PhysicsSimulation({ type, language }: Readonly<PhysicsSimulation
                 </Row>
                 <div style={{ marginTop: 12 }}>
                   <Formula math="U = I \cdot R_{eq} \quad ; \quad P = U \cdot I" block />
+                </div>
+              </div>
+            )}
+
+            {type === 'refraction-optics' && (
+              <div className="math-results-grid">
+                <Row gutter={[12, 12]}>
+                  <Col span={12}>
+                    <Text type="secondary">{t.reflectedAngle}:</Text>
+                    <Paragraph strong>{refAngle}°</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.refractedAngle}:</Text>
+                    <Paragraph strong>{isTIR ? t.tirMessage : `${refAngleOutDeg?.toFixed(1)}°`}</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.criticalAngle}:</Text>
+                    <Paragraph strong>{criticalAngleDeg ? `${criticalAngleDeg.toFixed(1)}°` : 'N/A'}</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.phaseVelocity1}:</Text>
+                    <Paragraph strong>{vel1.toFixed(2)} c</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.phaseVelocity2}:</Text>
+                    <Paragraph strong>{vel2.toFixed(2)} c</Paragraph>
+                  </Col>
+                </Row>
+                <div style={{ marginTop: 12 }}>
+                  <Formula math="n_1 \sin(i) = n_2 \sin(r) \quad ; \quad v = \frac{c}{n}" block />
+                </div>
+              </div>
+            )}
+
+            {type === 'lens-optics' && (
+              <div className="math-results-grid">
+                <Row gutter={[12, 12]}>
+                  <Col span={12}>
+                    <Text type="secondary">{t.imageDistance} (x₂):</Text>
+                    <Paragraph strong>{isAtFocus ? '∞' : `${X2.toFixed(1)} cm`}</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.magnification} (β):</Text>
+                    <Paragraph strong>{isAtFocus ? '∞' : lensBeta.toFixed(2)}</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.imageHeight} (y₂):</Text>
+                    <Paragraph strong>{isAtFocus ? '∞' : `${Math.abs(lensY2).toFixed(1)} cm`}</Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Text type="secondary">{t.opticalPower} (C):</Text>
+                    <Paragraph strong>{opticalPowerValue.toFixed(2)} δ (m⁻¹)</Paragraph>
+                  </Col>
+                  <Col span={24}>
+                    <Text type="secondary">{t.imageProperties}:</Text>
+                    <Paragraph strong style={{ color: '#1fd2b2' }}>
+                      {isAtFocus ? (
+                        t.infinityMessage
+                      ) : (
+                        `${X2 > 0 ? t.real : t.virtual}, ${lensBeta > 0 ? t.upright : t.inverted}, ${
+                          Math.abs(lensBeta) > 1.01
+                            ? t.magnified
+                            : Math.abs(lensBeta) < 0.99
+                            ? t.diminished
+                            : (language === 'en' ? 'Equal Size' : 'Egală ca mărime')
+                        }`
+                      )}
+                    </Paragraph>
+                  </Col>
+                </Row>
+                <div style={{ marginTop: 12 }}>
+                  <Formula math="\frac{1}{f} = \frac{1}{x_2} - \frac{1}{x_1} \quad ; \quad C = \frac{1}{f}" block />
                 </div>
               </div>
             )}
