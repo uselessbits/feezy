@@ -53,6 +53,7 @@ export const currentElectricity: Chapter = {
             ],
           },
           formulas: ['U = W/q', 'R = ρl/A', 'U = IR'],
+          simulation: 'electric-circuit',
         },
       ],
     },

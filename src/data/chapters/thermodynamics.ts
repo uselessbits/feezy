@@ -53,6 +53,7 @@ export const thermodynamics: Chapter = {
             ],
           },
           formulas: ['PV = nRT', 'P = ρRT/M', 'p1V1/T1 = p2V2/T2'],
+          simulation: 'piston-gas',
         },
       ],
     },

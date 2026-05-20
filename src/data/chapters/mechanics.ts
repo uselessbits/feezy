@@ -53,6 +53,7 @@ export const mechanics: Chapter = {
             ],
           },
           formulas: ['v = v_0 + at', 'x = x_0 + v_0 t + (1/2)at^2', 'v^2 = v_0^2 + 2aΔx'],
+          simulation: 'inclined-plane',
         },
       ],
     },

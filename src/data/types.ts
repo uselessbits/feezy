@@ -20,7 +20,9 @@ export interface SectionChart {
   yLabel?: LocalizedText;
 }
 
-export type ChapterId = 'mechanics' | 'thermodynamics' | 'current-electricity';
+export type ChapterId = 'mechanics' | 'thermodynamics' | 'current-electricity' | 'optics';
+
+export type SimulationType = 'inclined-plane' | 'piston-gas' | 'electric-circuit';
 
 export interface LessonSection {
   title: LocalizedText;
@@ -28,6 +30,7 @@ export interface LessonSection {
   bullets?: LocalizedTextArray;
   formulas?: string[];
   charts?: SectionChart[];
+  simulation?: SimulationType;
   pageRefs: number[];
 }
 
@@ -48,4 +51,23 @@ export interface Chapter {
   summary: LocalizedText;
   pageRefs: number[];
   lessons: Lesson[];
+}
+
+export type QuestQuestionType = 'multiple-choice' | 'numerical';
+
+export interface QuestQuestion {
+  id: string;
+  type: QuestQuestionType;
+  question: LocalizedText;
+  options?: LocalizedTextArray;
+  correctOptionIndex?: number;
+  correctValue?: number;
+  tolerance?: number;
+  unit?: string;
+  explanation: LocalizedText;
+}
+
+export interface ChapterQuest {
+  chapterId: ChapterId;
+  questions: QuestQuestion[];
 }

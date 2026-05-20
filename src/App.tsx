@@ -1,5 +1,5 @@
-import { BulbOutlined, BookOutlined, HomeOutlined, RocketOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Layout, Menu, Select, Space, Switch, Typography, theme } from 'antd';
+import { BulbOutlined, BookOutlined, HomeOutlined, RocketOutlined, TrophyOutlined, ExperimentOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, Layout, Card, Menu, Select, Space, Switch, Typography, theme } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { HashRouter, Link, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { I18nextProvider, useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import i18n, { supportedLanguages } from './i18n';
 import { chapters } from './data/curriculum';
 import { Formula } from './components/Formula';
 import { PhysicsChart } from './components/PhysicsChart';
+import { PhysicsSimulation } from './components/PhysicsSimulation';
+import { PracticePage } from './components/PracticePage';
 import type { ChapterId, Language } from './data/types';
 
 const { Header, Content, Footer } = Layout;
@@ -16,6 +18,7 @@ function AppShell() {
   const location = useLocation();
   const [isDark, setIsDark] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
+  const [xp, setXp] = useState(0);
   const contentLanguage = getContentLanguage(i18nInstance.language);
 
   useEffect(() => {
@@ -23,12 +26,24 @@ function AppShell() {
     document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
   }, [isDark, language]);
 
+  // Load and sync XP from localStorage for the header badge
+  useEffect(() => {
+    const updateXp = () => {
+      const savedXp = localStorage.getItem('feezy_xp');
+      if (savedXp) setXp(parseInt(savedXp, 10));
+    };
+    updateXp();
+    const interval = setInterval(updateXp, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const algorithm = isDark ? theme.darkAlgorithm : theme.defaultAlgorithm;
 
   const menuItems = useMemo(
     () => [
       { key: '/', icon: <HomeOutlined />, label: <Link to="/">{t('nav.home')}</Link> },
       { key: '/chapters', icon: <BookOutlined />, label: <Link to="/chapters">{t('nav.chapters')}</Link> },
+      { key: '/practice', icon: <RocketOutlined />, label: <Link to="/practice">{t('nav.practice')}</Link> },
     ],
     [t],
   );
@@ -58,6 +73,12 @@ function AppShell() {
           </div>
           <Menu mode="horizontal" selectedKeys={[location.pathname]} items={menuItems} className="top-nav" />
           <Space size="middle" className="header-actions">
+            {xp > 0 && (
+              <span className="header-xp-badge glass-card" style={{ padding: '4px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#7c5cff', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <TrophyOutlined style={{ color: '#ffd166' }} />
+                {xp} XP
+              </span>
+            )}
             <Select value={language} options={supportedLanguages} onChange={(value) => setLanguage(value)} style={{ width: 96 }} />
             <Switch checkedChildren={<BulbOutlined />} unCheckedChildren={<BulbOutlined />} checked={isDark} onChange={setIsDark} />
           </Space>
@@ -67,6 +88,7 @@ function AppShell() {
             <Route path="/" element={<HomePage language={contentLanguage} />} />
             <Route path="/chapters" element={<ChaptersPage language={contentLanguage} />} />
             <Route path="/chapters/:chapterId" element={<ChapterPage language={contentLanguage} />} />
+            <Route path="/practice" element={<PracticePage language={contentLanguage} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Content>
@@ -79,64 +101,130 @@ function AppShell() {
 function HomePage({ language }: Readonly<{ language: Language }>) {
   const { t } = useTranslation();
   const featuredChapter = chapters[0];
+  const totalLessons = chapters.reduce((acc, c) => acc + c.lessons.length, 0);
+
   return (
     <section className="hero">
-      <div className="hero-split">
-        <aside className="chapter-rail">
-          <div className="rail-header">
-            <Typography.Text className="eyebrow">{t('home.eyebrow')}</Typography.Text>
-            <Typography.Title level={3}>{t('home.railTitle')}</Typography.Title>
-            <Typography.Paragraph>{t('home.railBody')}</Typography.Paragraph>
+      {/* 1. Full-Width Hero Stage */}
+      <div className="hero-stage card full-width-hero">
+        <div className="stage-copy">
+          <Typography.Text className="eyebrow">{t('home.stageEyebrow')}</Typography.Text>
+          <Typography.Title style={{ fontSize: '38px', lineHeight: '1.2', margin: '12px 0 20px 0' }}>
+            {t('home.title')}
+          </Typography.Title>
+          <Typography.Paragraph className="hero-lead" style={{ fontSize: '16px', lineHeight: '1.6', marginBottom: '28px' }}>
+            {t('home.lead')}
+          </Typography.Paragraph>
+          <Space wrap size={16} style={{ marginBottom: '32px' }}>
+            <Button type="primary" size="large" icon={<RocketOutlined />} href={`#/chapters/${featuredChapter.id}`} className="hero-cta-btn">
+              {t('home.primaryCta')}
+            </Button>
+            <Button size="large" href="#/practice" className="hero-cta-btn secondary">
+              {t('home.secondaryCta')}
+            </Button>
+          </Space>
+          
+          {/* Quick Stats Row */}
+          <div className="hero-stats-row">
+            <div className="stat-item">
+              <span className="stat-val">{chapters.length}</span>
+              <span className="stat-lbl">{language === 'en' ? 'Chapters' : 'Capitole'}</span>
+            </div>
+            <div className="stat-divider" />
+            <div className="stat-item">
+              <span className="stat-val">{totalLessons}</span>
+              <span className="stat-lbl">{language === 'en' ? 'Lessons' : 'Lecții'}</span>
+            </div>
+            <div className="stat-divider" />
+            <div className="stat-item">
+              <span className="stat-val">3</span>
+              <span className="stat-lbl">{language === 'en' ? 'Simulators' : 'Simulări'}</span>
+            </div>
+            <div className="stat-divider" />
+            <div className="stat-item">
+              <span className="stat-val">20+</span>
+              <span className="stat-lbl">{language === 'en' ? 'Quests' : 'Misiuni'}</span>
+            </div>
           </div>
-          <div className="rail-list">
-            {chapters.map((chapter) => (
-              <Link className={`rail-card ${chapter.id === featuredChapter.id ? 'active' : ''}`} to={`/chapters/${chapter.id}`} key={chapter.id}>
-                <span className="rail-badge">{chapter.code}</span>
-                <div>
-                  <Typography.Title level={4}>{chapter.title[language]}</Typography.Title>
-                  <Typography.Paragraph>{chapter.summary[language]}</Typography.Paragraph>
+        </div>
+        <div className="illustration-frame">
+          <CourseIllustration />
+        </div>
+      </div>
+
+      {/* 2. Linear Chapter Directory List (Vertical Flow) */}
+      <div className="chapters-section" style={{ marginTop: '24px' }}>
+        <div className="section-header" style={{ marginBottom: '28px', textAlign: 'center' }}>
+          <Typography.Text className="eyebrow">{t('home.eyebrow')}</Typography.Text>
+          <Typography.Title level={2} style={{ marginTop: '8px' }}>{t('home.railTitle')}</Typography.Title>
+          <Typography.Paragraph style={{ maxWidth: '600px', margin: '8px auto 0 auto', fontSize: '15px' }}>
+            {t('home.railBody')}
+          </Typography.Paragraph>
+        </div>
+        
+        <div className="chapters-flow-list">
+          {chapters.map((chapter, idx) => (
+            <Link className="chapters-flow-card card" to={`/chapters/${chapter.id}`} key={chapter.id}>
+              <div className="flow-card-num">{idx + 1}</div>
+              <div className="flow-card-content">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                  <Typography.Title level={3} style={{ margin: 0 }}>
+                    {chapter.title[language]}
+                  </Typography.Title>
+                  <span className="flow-card-badge">{chapter.code}</span>
                 </div>
-                <Typography.Text>{chapter.lessons.length} lessons</Typography.Text>
-              </Link>
-            ))}
-          </div>
-        </aside>
-
-        <div className="hero-stage card">
-          <div className="stage-copy">
-            <Typography.Text className="eyebrow">{t('home.stageEyebrow')}</Typography.Text>
-            <Typography.Title>{t('home.title')}</Typography.Title>
-            <Typography.Paragraph className="hero-lead">{t('home.lead')}</Typography.Paragraph>
-            <Space wrap>
-              <Button type="primary" icon={<RocketOutlined />} href={`#/chapters/${featuredChapter.id}`}>
-                {t('home.primaryCta')}
-              </Button>
-              <Button href="#/chapters">{t('home.secondaryCta')}</Button>
-            </Space>
-          </div>
-          <div className="illustration-frame">
-            <CourseIllustration />
-          </div>
+                <Typography.Paragraph type="secondary" style={{ margin: '0 0 12px 0', fontSize: '15px' }}>
+                  {chapter.summary[language]}
+                </Typography.Paragraph>
+                
+                {/* Micro lessons preview bullet row */}
+                <div className="flow-card-lessons-preview">
+                  {chapter.lessons.slice(0, 3).map((lesson) => (
+                    <span className="preview-pill" key={lesson.id}>
+                      {lesson.title[language]}
+                    </span>
+                  ))}
+                  {chapter.lessons.length > 3 && (
+                    <span className="preview-pill more">
+                      +{chapter.lessons.length - 3} {language === 'en' ? 'more' : 'în plus'}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flow-card-action">
+                <span className="lessons-count-text">
+                  {chapter.lessons.length} {language === 'en' ? 'lessons' : 'lecții'}
+                </span>
+                <Button type="default" icon={<ArrowRightOutlined />} className="action-arrow-btn" />
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 
-      <div className="feature-grid">
-        <div className="feature-card card">
-          <Typography.Title level={4}>{t('home.cardTitle')}</Typography.Title>
-          <Typography.Paragraph>{t('home.cardBody')}</Typography.Paragraph>
-          <Typography.Text>{t('home.cardMeta')}</Typography.Text>
+      {/* 3. Feature Cards Grid */}
+      <div className="feature-grid" style={{ marginTop: '40px' }}>
+        <div className="feature-card card" style={{ padding: '24px 28px' }}>
+          <TrophyOutlined style={{ fontSize: 36, color: '#7c5cff', marginBottom: 16 }} />
+          <Typography.Title level={4}>{t('home.feature1Title')}</Typography.Title>
+          <Typography.Paragraph type="secondary" style={{ fontSize: 14, margin: 0 }}>
+            {t('home.feature1Body')}
+          </Typography.Paragraph>
         </div>
-      </div>
-
-      <div className="chapter-grid">
-        {chapters.map((chapter) => (
-          <Link className="chapter-card" to={`/chapters/${chapter.id}`} key={chapter.id}>
-            <Typography.Text className="chapter-kicker">{chapter.code}</Typography.Text>
-            <Typography.Title level={3}>{chapter.title[language]}</Typography.Title>
-            <Typography.Paragraph>{chapter.summary[language]}</Typography.Paragraph>
-            <Typography.Text>{chapter.lessons.length} lessons</Typography.Text>
-          </Link>
-        ))}
+        <div className="feature-card card" style={{ padding: '24px 28px' }}>
+          <ExperimentOutlined style={{ fontSize: 36, color: '#1fd2b2', marginBottom: 16 }} />
+          <Typography.Title level={4}>{t('home.feature2Title')}</Typography.Title>
+          <Typography.Paragraph type="secondary" style={{ fontSize: 14, margin: 0 }}>
+            {t('home.feature2Body')}
+          </Typography.Paragraph>
+        </div>
+        <div className="feature-card card" style={{ padding: '24px 28px' }}>
+          <BookOutlined style={{ fontSize: 36, color: '#ffd166', marginBottom: 16 }} />
+          <Typography.Title level={4}>{t('home.feature3Title')}</Typography.Title>
+          <Typography.Paragraph type="secondary" style={{ fontSize: 14, margin: 0 }}>
+            {t('home.feature3Body')}
+          </Typography.Paragraph>
+        </div>
       </div>
     </section>
   );
@@ -187,7 +275,7 @@ function ChaptersPage({ language }: Readonly<{ language: Language }>) {
             <Typography.Title level={3}>{chapter.title[language]}</Typography.Title>
             <Typography.Paragraph>{chapter.summary[language]}</Typography.Paragraph>
           </div>
-          <Typography.Text>{chapter.lessons.length} lessons</Typography.Text>
+          <Typography.Text>{chapter.lessons.length} {language === 'en' ? 'lessons' : 'lecții'}</Typography.Text>
         </Link>
       ))}
     </div>
@@ -237,7 +325,7 @@ function ChapterPage({ language }: Readonly<{ language: Language }>) {
 
       <div className="stepper-progress">
         <Typography.Text className="progress-label">
-          Section {currentSectionIndex + 1} of {totalSections}
+          {language === 'en' ? 'Section' : 'Secțiunea'} {currentSectionIndex + 1} {language === 'en' ? 'of' : 'din'} {totalSections}
         </Typography.Text>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${((currentSectionIndex + 1) / totalSections) * 100}%` }} />
@@ -275,17 +363,41 @@ function ChapterPage({ language }: Readonly<{ language: Language }>) {
             ))}
           </div>
         ) : null}
+        
+        {section.simulation ? (
+          <div style={{ marginTop: 24 }}>
+            <PhysicsSimulation type={section.simulation} language={language} />
+          </div>
+        ) : null}
+
+        {currentSectionIndex === totalSections - 1 ? (
+          <Card className="lesson-finish-cta glass-card animate-glow" style={{ marginTop: 28, border: '2px dashed #7c5cff', background: 'rgba(124, 92, 255, 0.03)', textAlign: 'center', padding: '16px' }}>
+            <Typography.Title level={4} style={{ marginTop: 0 }}>
+              {language === 'en' ? '🎉 Chapter Completed!' : '🎉 Capitol Finalizat!'}
+            </Typography.Title>
+            <Typography.Paragraph>
+              {language === 'en'
+                ? 'You have completed the theoretical lessons. Put your skills to the test in Quest Mode!'
+                : 'Ai parcurs lecțiile teoretice. Pune-ți abilitățile la încercare în Modul Misiune!'}
+            </Typography.Paragraph>
+            <Link to="/practice">
+              <Button type="primary" icon={<RocketOutlined />} size="large">
+                {language === 'en' ? 'Start Chapter Quest' : 'Începe Misiunea Capitolului'}
+              </Button>
+            </Link>
+          </Card>
+        ) : null}
       </article>
 
       <div className="stepper-controls">
         <Button onClick={handlePrev} disabled={currentSectionIndex === 0}>
-          Back
+          {language === 'en' ? 'Back' : 'Înapoi'}
         </Button>
         <Typography.Text className="step-counter">
           {currentSectionIndex + 1} / {totalSections}
         </Typography.Text>
         <Button type="primary" onClick={handleNext} disabled={currentSectionIndex === totalSections - 1}>
-          Next
+          {language === 'en' ? 'Next' : 'Următorul'}
         </Button>
       </div>
     </div>
