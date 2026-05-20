@@ -5,7 +5,7 @@ import { HashRouter, Link, Navigate, Route, Routes, useLocation, useParams } fro
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import i18n, { supportedLanguages } from './i18n';
 import { chapters } from './data/curriculum';
-import { Formula } from './components/Formula';
+import { Formula, FormulaDetailCard } from './components/Formula';
 import { PhysicsChart } from './components/PhysicsChart';
 import { PhysicsSimulation } from './components/PhysicsSimulation';
 import { PracticePage } from './components/PracticePage';
@@ -344,7 +344,9 @@ function ChapterPage({ language }: Readonly<{ language: Language }>) {
         ) : null}
         {section.formulas?.length ? (
           <div className="formula-row">
-            {section.formulas.map((formula) => <Formula key={formula} math={formula} block />)}
+            {section.formulas.map((formula) => (
+              <FormulaDetailCard key={formula} formulaStr={formula} language={language} />
+            ))}
           </div>
         ) : null}
         {section.charts?.length ? (
