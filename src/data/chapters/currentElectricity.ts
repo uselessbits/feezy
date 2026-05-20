@@ -3,25 +3,25 @@ import type { Chapter } from '../types';
 export const currentElectricity: Chapter = {
   id: 'current-electricity',
   code: '3',
-  title: { en: 'Current Electricity', ro: 'Electricitate Continua' },
+  title: { en: 'Current Electricity', ro: 'Electricitate Continuă' },
   summary: {
     en: 'Electric current, resistance, and power.',
-    ro: 'Curent electric, rezistenta si putere.',
+    ro: 'Curent electric, rezistență și putere.',
   },
   pageRefs: [18, 19, 20],
   lessons: [
     {
       id: 'quantities',
       code: '3.1',
-      title: { en: 'Electric Quantities', ro: 'Marimi Electrice' },
+      title: { en: 'Electric Quantities', ro: 'Mărimi Electrice' },
       summary: {
         en: 'Current, voltage, and resistance fundamentals.',
-        ro: 'Fundamentele curentului, tensiunii si rezistentei.',
+        ro: 'Fundamentele curentului, tensiunii și rezistenței.',
       },
       pageRefs: [18, 19],
       objectives: {
         en: ['Define electric current', 'Apply Ohms law', 'Calculate resistance'],
-        ro: ['Definiti curentul electric', 'Aplicati legea lui Ohm', 'Calculati rezistenta'],
+        ro: ['Definiți curentul electric', 'Aplicați legea lui Ohm', 'Calculați rezistența'],
       },
       sections: [
         {
@@ -33,14 +33,14 @@ export const currentElectricity: Chapter = {
               'The unit of current is the ampere (A), defined as coulombs per second.',
             ],
             ro: [
-              'Curentul electric este fluxul de sarcina pe unitatea de timp.',
-              'Unitatea de curent este amperul (A), definit ca coulombi pe secunda.',
+              'Curentul electric este fluxul de sarcină pe unitatea de timp.',
+              'Unitatea de curent este amperul (A), definit ca sarcina de un coulomb pe secundă.',
             ],
           },
           formulas: ['I = Δq / Δt', 'I = nqvA'],
         },
         {
-          title: { en: 'Voltage and resistance', ro: 'Tensiune si rezistenta' },
+          title: { en: 'Voltage and resistance', ro: 'Tensiune și rezistență' },
           pageRefs: [19],
           paragraphs: {
             en: [
@@ -48,8 +48,8 @@ export const currentElectricity: Chapter = {
               'Resistance opposes the flow of current and depends on material properties.',
             ],
             ro: [
-              'Tensiunea este energia pe unitatea de sarcina in camp electric.',
-              'Rezistenta se opune fluxului curentului si depinde de proprietatile materialului.',
+              'Tensiunea este energia pe unitatea de sarcină în câmp electric.',
+              'Rezistența se opune curgerii curentului și depinde de proprietățile materialului.',
             ],
           },
           formulas: ['U = W/q', 'R = ρl/A', 'U = IR'],
@@ -63,12 +63,12 @@ export const currentElectricity: Chapter = {
       title: { en: 'Circuit Laws', ro: 'Legile Circuitelor' },
       summary: {
         en: 'Kirchhoff laws and circuit analysis.',
-        ro: 'Legile lui Kirchhoff si analiza circuitelor.',
+        ro: 'Legile lui Kirchhoff și analiza circuitelor.',
       },
       pageRefs: [19],
       objectives: {
         en: ['Apply Kirchhoff laws', 'Analyze series and parallel circuits'],
-        ro: ['Aplicati legile lui Kirchhoff', 'Analizati circuite in serie si paralel'],
+        ro: ['Aplicați legile lui Kirchhoff', 'Analizați circuite în serie și paralel'],
       },
       sections: [
         {
@@ -80,8 +80,8 @@ export const currentElectricity: Chapter = {
               'Voltage law: sum of voltages around a closed loop equals zero.',
             ],
             ro: [
-              'Legea curentului: suma curentilor care intra intr-un nod este egala cu suma curentilor care pleaca.',
-              'Legea tensiunii: suma tensiunilor in jurul unei ochiuri inchise este zero.',
+              'Legea curentului: suma curenților care intră într-un nod este egală cu suma curenților care ies.',
+              'Legea tensiunii: suma algebrică a tensiunilor în lungul unui ochi de circuit închis este zero.',
             ],
           },
           formulas: ['Σ I_in = Σ I_out', 'Σ U = 0'],
@@ -91,19 +91,19 @@ export const currentElectricity: Chapter = {
     {
       id: 'energy-power',
       code: '3.3',
-      title: { en: 'Electrical Energy and Power', ro: 'Energie si Putere Electrica' },
+      title: { en: 'Electrical Energy and Power', ro: 'Energie și Putere Electrică' },
       summary: {
         en: 'Power dissipation and energy calculations.',
-        ro: 'Disiparea puterii si calcule de energie.',
+        ro: 'Disiparea puterii și calcule de energie.',
       },
       pageRefs: [20],
       objectives: {
         en: ['Calculate electrical power', 'Determine energy consumption'],
-        ro: ['Calculati puterea electrica', 'Determinati consumul de energie'],
+        ro: ['Calculați puterea electrică', 'Determinați consumul de energie'],
       },
       sections: [
         {
-          title: { en: 'Electric power', ro: 'Putere electrica' },
+          title: { en: 'Electric power', ro: 'Putere electrică' },
           pageRefs: [20],
           paragraphs: {
             en: [
@@ -111,8 +111,8 @@ export const currentElectricity: Chapter = {
               'In resistive loads, power is dissipated as heat.',
             ],
             ro: [
-              'Puterea este rata de transfer de energie, masurata in wati.',
-              'In sarcini rezistive, puterea se disipa sub forma de caldura.',
+              'Puterea este rata de transfer a energiei, măsurată în wați.',
+              'În sarcini rezistive, puterea se disipă sub formă de căldură.',
             ],
           },
           formulas: ['P = U·I', 'P = I^2·R', 'P = U^2/R'],

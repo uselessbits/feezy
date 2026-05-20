@@ -3,25 +3,25 @@ import type { Chapter } from '../types';
 export const thermodynamics: Chapter = {
   id: 'thermodynamics',
   code: '2',
-  title: { en: 'Thermodynamics', ro: 'Termodinamica' },
+  title: { en: 'Thermodynamics', ro: 'Termodinamică' },
   summary: {
     en: 'Heat, work, and the laws of thermodynamics.',
-    ro: 'Caldura, lucru si legile termodinamicii.',
+    ro: 'Căldura, lucrul mecanic și legile termodinamicii.',
   },
   pageRefs: [10, 11, 12, 13, 14, 15, 16, 17],
   lessons: [
     {
       id: 'basics',
       code: '2.1',
-      title: { en: 'Thermodynamic Basics', ro: 'Notiuni Fundamentale' },
+      title: { en: 'Thermodynamic Basics', ro: 'Noțiuni Fundamentale' },
       summary: {
         en: 'Matter structure, state parameters, and gas transformations.',
-        ro: 'Structura materiei, parametri de stare si transformari de gaze.',
+        ro: 'Structura materiei, parametri de stare și transformări de gaze.',
       },
       pageRefs: [10, 11],
       objectives: {
         en: ['Understand atomic structure', 'Apply ideal gas law', 'Analyze gas processes'],
-        ro: ['Intelegeti structura atomica', 'Aplicati legea gazelor ideale', 'Analizati procesele de gaze'],
+        ro: ['Înțelegeți structura atomică', 'Aplicați legea gazelor ideale', 'Analizați procesele de gaze'],
       },
       sections: [
         {
@@ -33,8 +33,8 @@ export const thermodynamics: Chapter = {
               'The three states of matter are solid, liquid, and gas.',
             ],
             ro: [
-              'Materia consta din atomi si molecule legate de forte electromagnetice.',
-              'Trei stari ale materiei sunt solid, lichid si gaz.',
+              'Materia constă din atomi și molecule legați prin forțe electromagnetice.',
+              'Cele trei stări de agregare ale materiei sunt solidă, lichidă și gazoasă.',
             ],
           },
           formulas: ['N = n · N_A'],
@@ -45,11 +45,11 @@ export const thermodynamics: Chapter = {
           paragraphs: {
             en: [
               'Pressure, volume, and temperature define the state of a gas.',
-              'The ideal gas law relates these parameters: PV = nRT.',
+              'The ideal gas law relates these parameters: $PV = nRT$.',
             ],
             ro: [
-              'Presiunea, volumul si temperatura definesc starea unui gaz.',
-              'Legea gazelor ideale leaga acesti parametri: PV = nRT.',
+              'Presiunea, volumul și temperatura definesc starea unui gaz.',
+              'Legea gazelor ideale leagă acești parametri: $PV = nRT$.',
             ],
           },
           formulas: ['PV = nRT', 'P = ρRT/M', 'p1V1/T1 = p2V2/T2'],
@@ -60,19 +60,19 @@ export const thermodynamics: Chapter = {
     {
       id: 'work-energy',
       code: '2.2',
-      title: { en: 'Work and Thermodynamic Energy', ro: 'Lucru si Energie Termica' },
+      title: { en: 'Work and Thermodynamic Energy', ro: 'Lucru și Energie Termică' },
       summary: {
         en: 'Work done by gases and internal energy.',
-        ro: 'Lucrul efectuat de gaze si energia interna.',
+        ro: 'Lucrul efectuat de gaze și energia internă.',
       },
       pageRefs: [12, 13],
       objectives: {
         en: ['Calculate work in thermodynamic processes', 'Understand internal energy', 'Apply energy conservation'],
-        ro: ['Calculati lucrul in procese termodinamice', 'Intelegeti energia interna', 'Aplicati conservarea energiei'],
+        ro: ['Calculați lucrul în procese termodinamice', 'Înțelegeți energia internă', 'Aplicați conservarea energiei'],
       },
       sections: [
         {
-          title: { en: 'Work in thermodynamics', ro: 'Lucru in termodinamica' },
+          title: { en: 'Work in thermodynamics', ro: 'Lucru în termodinamică' },
           pageRefs: [12],
           paragraphs: {
             en: [
@@ -80,14 +80,14 @@ export const thermodynamics: Chapter = {
               'In an isobaric process, pressure remains constant.',
             ],
             ro: [
-              'Lucrul efectuat de un gaz este presiunea inmultit cu variatea volumului.',
-              'Intr-un proces izobar, presiunea ramane constanta.',
+              'Lucrul efectuat de un gaz este egal cu produsul dintre presiune și variația volumului.',
+              'Într-un proces izobar, presiunea rămâne constantă.',
             ],
           },
           formulas: ['W = P·ΔV', 'W = nR·ΔT'],
         },
         {
-          title: { en: 'Internal energy', ro: 'Energia interna' },
+          title: { en: 'Internal energy', ro: 'Energia internă' },
           pageRefs: [13],
           paragraphs: {
             en: [
@@ -95,8 +95,8 @@ export const thermodynamics: Chapter = {
               'For an ideal gas, internal energy depends only on temperature.',
             ],
             ro: [
-              'Energia interna este energia cinetica si potentiala totala a particulelor.',
-              'Pentru un gaz ideal, energia interna depinde numai de temperatura.',
+              'Energia internă este energia cinetică și potențială totală a particulelor.',
+              'Pentru un gaz ideal, energia internă depinde numai de temperatură.',
             ],
           },
           formulas: ['U = (3/2)nRT', 'ΔU = Q - W'],
@@ -109,12 +109,12 @@ export const thermodynamics: Chapter = {
       title: { en: 'Laws of Thermodynamics', ro: 'Legile Termodinamicii' },
       summary: {
         en: 'First and second laws, and heat engines.',
-        ro: 'Prima si a doua lege, si motoare termice.',
+        ro: 'Prima și a doua lege, și motoare termice.',
       },
       pageRefs: [14, 15, 16, 17],
       objectives: {
         en: ['Apply the first law', 'Understand entropy', 'Calculate engine efficiency'],
-        ro: ['Aplicati prima lege', 'Intelegeti entropia', 'Calculati eficienta motorului'],
+        ro: ['Aplicați prima lege', 'Înțelegeți entropia', 'Calculați randamentul motorului'],
       },
       sections: [
         {
@@ -126,14 +126,14 @@ export const thermodynamics: Chapter = {
               'Heat added to a system equals change in internal energy plus work done by the system.',
             ],
             ro: [
-              'Energia nu poate fi creata sau distrusa, doar transformata.',
-              'Caldura adaugata la un sistem este egala cu variatea energiei interne plus lucrul efectuat.',
+              'Energia nu poate fi creată sau distrusă, ci doar transformată.',
+              'Căldura adăugată unui sistem este egală cu variația energiei interne plus lucrul mecanic efectuat.',
             ],
           },
           formulas: ['Q = ΔU + W'],
         },
         {
-          title: { en: 'Second law and engines', ro: 'A doua lege si motoare' },
+          title: { en: 'Second law and engines', ro: 'A doua lege și motoare' },
           pageRefs: [15, 16, 17],
           paragraphs: {
             en: [
@@ -141,8 +141,8 @@ export const thermodynamics: Chapter = {
               'Heat engines convert heat into mechanical work with limited efficiency.',
             ],
             ro: [
-              'Entropia creste in sisteme izolate care sufera procese ireversibile.',
-              'Motoarele termice convertesc caldura in lucru mecanic cu eficienta limitata.',
+              'Entropia crește în sistemele izolate care suferă procese ireversibile.',
+              'Motoarele termice convertesc căldura în lucru mecanic cu o eficiență limitată.',
             ],
           },
           formulas: ['η = W/Q_in', 'η = 1 - T_c/T_h'],

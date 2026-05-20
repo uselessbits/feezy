@@ -30,11 +30,13 @@ export const optics: Chapter = {
           paragraphs: {
             en: [
               'Reflection occurs when light bounces off a boundary between two different media.',
-              'The angle of incidence equals the angle of reflection. Both rays and the normal lie in the same plane.',
+              'The angle of incidence equals the angle of reflection.',
+              'Both rays and the normal lie in the same plane.',
             ],
             ro: [
               'Reflexia are loc atunci când lumina se întoarce din suprafața de separare dintre două medii diferite.',
-              'Unghiul de incidență este egal cu unghiul de reflexie. Ambele raze și normala se află în același plan.',
+              'Unghiul de incidență este egal cu unghiul de reflexie.',
+              'Ambele raze și normala se află în același plan.',
             ],
           },
           formulas: ['i = r'],
@@ -145,7 +147,7 @@ export const optics: Chapter = {
             ],
             ro: [
               'Difracția este curbarea undelor în jurul obstacolelor sau prin fante.',
-              'Polarizarea limitează oscilațiile undelor de lumiă într-un singur plan.',
+              'Polarizarea limitează oscilațiile undelor de lumină într-un singur plan.',
             ],
           },
           formulas: ['d \\sin(\\theta) = k \\lambda'],

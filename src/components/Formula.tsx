@@ -10,13 +10,31 @@ interface FormulaProps {
   math: string;
   block?: boolean;
   interactive?: boolean;
+  text?: boolean;
 }
 
-export function Formula({ math, block = false, interactive = false }: Readonly<FormulaProps>) {
+export function Formula({ math, block = false, interactive = false, text = false }: Readonly<FormulaProps>) {
   if (block) {
     return (
       <div className={`formula-block ${interactive ? 'interactive' : ''}`}>
         <BlockMath math={math} />
+      </div>
+    );
+  }
+
+  // If there are newlines, split the text into lines/paragraphs
+  if (math.includes('\n')) {
+    const lines = math.split('\n');
+    return (
+      <div className="formula-lines" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {lines.map((line, idx) => {
+          if (!line.trim()) return <div key={idx} style={{ height: '8px' }} />;
+          return (
+            <div key={idx} className="formula-line">
+              <Formula math={line} interactive={interactive} text={text} />
+            </div>
+          );
+        })}
       </div>
     );
   }
@@ -37,6 +55,10 @@ export function Formula({ math, block = false, interactive = false }: Readonly<F
         })}
       </span>
     );
+  }
+
+  if (text) {
+    return <span className={interactive ? 'interactive' : ''}>{math}</span>;
   }
 
   return (
